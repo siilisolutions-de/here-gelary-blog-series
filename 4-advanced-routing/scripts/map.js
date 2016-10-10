@@ -46,6 +46,7 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates) {
   var routeOptions = {
     mode: 'fastest;car',
     representation: 'display',
+    alternatives: 3,
     waypoint0: Utils.locationToWaypointString(fromCoordinates),
     waypoint1: Utils.locationToWaypointString(toCoordinates)
   };
