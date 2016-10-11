@@ -1,5 +1,14 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .map {
@@ -24,9 +33,15 @@ body {
   padding: 0;
 }
 
-#route-panel > ul li {
+#route-panel > ul > li {
   display: block;
-  padding: 5px;
+  padding: 0.75em;
+  border-bottom: 1px solid #eee;
+}
+
+
+#route-panel > ul > li:last-child {
+  border: none;
 }
 
 #route-panel ol.directions {
@@ -39,17 +54,18 @@ body {
   list-style-type: decimal;
   list-style-position: outside;
   font-size: 80%;
-  margin: 0.5em 0 0;
+  margin: 0.75em 0 0;
 }
 
 #route-panel ol.directions li {
   display: list-item;
+  margin: 0.5em 0 0.5em 0.25em;
 }
 
 #route-panel > ul li.selected,
 #route-panel > ul li.selected:hover {
   color: white;
-  background: rgba(255, 0, 0, 0.8);
+  background: rgba(0, 85, 170, 0.75);
 }
 
 #route-panel > ul li.selected ol.directions {
@@ -57,6 +73,6 @@ body {
 }
 
 #route-panel > ul > li:hover {
-  background: #efe46e;
+  background: rgba(0, 85, 170, 0.25);
   cursor: pointer;
 }
