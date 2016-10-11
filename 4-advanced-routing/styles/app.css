@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+}
+
+.map {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#route-panel {
+  background: white;
+  width: 25%;
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
+  padding: 10px;
+}
+
+#route-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#route-panel > ul li {
+  display: block;
+  padding: 5px;
+}
+
+#route-panel ol.directions {
+  display: none;
+  overflow: auto;
+  max-height: 400px;
+  background: #fff;
+  padding: 5px 5px 5px 25px;
+  color: #000;
+  list-style-type: decimal;
+  list-style-position: outside;
+  font-size: 80%;
+  margin: 0.5em 0 0;
+}
+
+#route-panel ol.directions li {
+  display: list-item;
+}
+
+#route-panel > ul li.selected,
+#route-panel > ul li.selected:hover {
+  color: white;
+  background: rgba(255, 0, 0, 0.8);
+}
+
+#route-panel > ul li.selected ol.directions {
+  display: block;
+}
+
+#route-panel > ul > li:hover {
+  background: #efe46e;
+  cursor: pointer;
+}
