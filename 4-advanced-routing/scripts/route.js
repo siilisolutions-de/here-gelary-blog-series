@@ -1,5 +1,6 @@
-function HERERoute (map, platform, routeOptions) {
+'use strict';
 
+function HERERoute (map, platform, routeOptions) {
   var router = platform.getRoutingService();
   var routeLineStyles = {
     normal: { strokeColor: 'rgba(0, 85, 170, 0.5)', lineWidth: 3 },

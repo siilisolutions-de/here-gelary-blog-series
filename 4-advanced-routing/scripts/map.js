@@ -1,3 +1,5 @@
+'use strict';
+
 function HEREMap (mapContainer, platform, mapOptions) {
   this.platform = platform;
   this.position = mapOptions.center;
@@ -29,9 +31,11 @@ HEREMap.prototype.updateMyPosition = function(event) {
   }
 
   // Draw the route from current location to HERE HQ if not yet drawn
+  /*
   if (!this.route) {
     this.drawRoute(this.position, HEREHQcoordinates);
   }
+  */
 
   this.myLocationMarker = this.addMarker(this.position, 'iceCream');
   this.map.setCenter(this.position);
