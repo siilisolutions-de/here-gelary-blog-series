@@ -9,6 +9,12 @@ function HEREMap (mapContainer, platform, mapOptions) {
   // Instantiate wrapped HERE map
   this.map = new H.Map(mapContainer, defaultLayers.normal.map, mapOptions);
 
+  // debug da shit
+  this.map.addEventListener('tap', (evt) => {
+    var coord = this.map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+    this.drawRoute(this.position, coord);
+  });
+
   // Marker objects
   this.markers = {
     myLocation: null,

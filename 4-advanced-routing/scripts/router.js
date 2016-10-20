@@ -12,28 +12,32 @@ function HERERouter (map, platform) {
     normal: { strokeColor: 'rgba(0, 85, 170, 0.5)', lineWidth: 3 },
     selected: { strokeColor: 'rgba(255, 0, 0, 0.7)', lineWidth: 7 }
   };
+
+  var panelElement = document.querySelector('#route-panel');
+  var routePanelOptions = {
+    onRouteSelection: this.onRouteSelection.bind(this)
+  };
+  this.routePanel = new HERERoutesPanel(panelElement, routePanelOptions);
 }
 
-HERERouter.prototype.getRouteLine = function(route) {
-  var routeShape = route.shape;
+HERERouter.prototype.drawRoute = function(options) {
+  this.getRoutes(options)
+    .then((result) => {
+      var { routes, routeLineGroup } = result; // achtung!
 
-  // Create a strip to use as a point source for the route line
-  var strip = new H.geo.Strip();
+      if (this.routeLineGroup) {
+        this.map.removeObject(this.routeLineGroup);
+      }
+      this.routeLineGroup = routeLineGroup;
+      this.map.addObject(this.routeLineGroup);
 
-  // Push all the points in the shape into the strip:
-  routeShape.forEach(function(point) {
-    var parts = point.split(',');
-    strip.pushLatLngAlt(parts[0], parts[1]);
-  });
+      this.map.setViewBounds(routeLineGroup.getBounds());
 
-  // Create a polyline to display the route:
-  var routeLine = new H.map.Polyline(strip,
-    { style: this.routeLineStyles.normal }
-  );
-
-  return routeLine;
+      this.routePanel.setRoutes(routes);
+    }).catch((error) => {
+      console.error('Oh no! There was some communication error!', error);
+    });
 };
-
 
 HERERouter.prototype.getRoutes = function(options) {
   return new Promise((resolve, reject) => {
@@ -68,26 +72,24 @@ HERERouter.prototype.getRoutes = function(options) {
   });
 };
 
-HERERouter.prototype.drawRoute = function(options) {
-  this.getRoutes(options)
-    .then((result) => {
-      var { routes, routeLineGroup } = result; // achtung!
+HERERouter.prototype.getRouteLine = function(route) {
+  var routeShape = route.shape;
 
-      if (this.routeLineGroup) {
-        this.map.removeObject(this.routeLineGroup);
-      }
-      this.routeLineGroup = routeLineGroup;
-      this.map.addObject(this.routeLineGroup);
+  // Create a strip to use as a point source for the route line
+  var strip = new H.geo.Strip();
 
-      this.map.setViewBounds(routeLineGroup.getBounds());
+  // Push all the points in the shape into the strip:
+  routeShape.forEach(function(point) {
+    var parts = point.split(',');
+    strip.pushLatLngAlt(parts[0], parts[1]);
+  });
 
-      this.routePanel = new HERERoutesPanel(routes,
-        { onRouteSelection: this.onRouteSelection.bind(this) }
-      );
+  // Create a polyline to display the route:
+  var routeLine = new H.map.Polyline(strip,
+    { style: this.routeLineStyles.normal }
+  );
 
-    }).catch((error) => {
-      console.error('Oh no! There was some communication error!', error);
-    });
+  return routeLine;
 };
 
 HERERouter.prototype.onRouteSelection = function(route) {
