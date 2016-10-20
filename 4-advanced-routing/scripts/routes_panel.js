@@ -1,10 +1,14 @@
 function HERERoutesPanel(routes, options) {
-
   var selectedRoute;
   var selectedRouteElement;
 
   var render = function(routes) {
     var routeList = document.querySelector('#route-panel ul');
+
+    while (routeList.hasChildNodes()) {
+      routeList.removeChild(routeList.firstChild);
+    }
+
     routes.forEach(function(route, i) {
       routeList.appendChild(renderRouteElement(route, i));
     });
