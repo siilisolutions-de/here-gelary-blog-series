@@ -1,3 +1,0 @@
-- always use const or let instead of var, too late now but anyway
-- 'use strict';
-- arrow functions, destructuring
