@@ -10,10 +10,10 @@ var HEREHQcoordinates = {
   var mapContainer = document.getElementById('map-container');
 
   var platform = new H.service.Platform({
-    app_id: 'Qxpe0u4bNSyZLiPB6iVH', // // <-- ENTER YOUR APP ID HERE
-    app_code: 'Ko6aycWKHRXsqQlTe9KGMw', // <-- ENTER YOUR APP CODE HERE
+    app_id: '...', // // <-- ENTER YOUR APP ID HERE
+    app_code: '...', // <-- ENTER YOUR APP CODE HERE
     // Only necessary if served over HTTPS:
-    useHTTPS: false
+    useHTTPS: true
   });
 
   // Displaying the map
