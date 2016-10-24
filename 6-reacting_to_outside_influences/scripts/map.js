@@ -15,7 +15,7 @@ function HEREMap (mapContainer, platform, mapOptions) {
     origin: null,
     destination: null
   };
-  
+
   // Instantiate router object
   this.router = new HERERouter(this.map, this.platform, this.onChangeSelectedRoute.bind(this));
 
@@ -131,10 +131,9 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePo
 };
 
 HEREMap.prototype.onChangeSelectedRoute = function(route) {
-  // This is a bit ugly, but I have no time to find the correct method from the API :(
-  var middlePointOfTheRoute = Utils.locationToString(route.routeLine.getBounds().getCenter());
+  var middleOfRoute = Utils.locationToString(route.routeLine.getBounds().getCenter());
 
-  this.searchForIcecreamShop(middlePointOfTheRoute);
+  this.searchForIcecreamShop(middleOfRoute);
 };
 
 HEREMap.prototype.onChangeViaPoint = function(reroutePoint) {
