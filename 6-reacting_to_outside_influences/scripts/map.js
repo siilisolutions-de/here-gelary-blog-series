@@ -17,10 +17,10 @@ function HEREMap (mapContainer, platform, mapOptions) {
   };
   
   // Instantiate router object
-  this.router = new HERERouter(this.map, this.platform);
+  this.router = new HERERouter(this.map, this.platform, this.onChangeSelectedRoute.bind(this));
 
   // Instantiate places search
-  this.places = new HEREPlaces(this.map, this.platform);
+  this.places = new HEREPlaces(this.map, this.platform, this.onChangeViaPoint.bind(this));
 
   // Basic behavior: Zooming and panning
   var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
@@ -103,27 +103,51 @@ HEREMap.prototype.resizeToFit = function() {
   this.map.getViewPort().resize();
 };
 
-HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates) {
+HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePoint) {
+  var startPoint = Utils.locationToWaypointString(fromCoordinates);
+  var endPoint = Utils.locationToWaypointString(toCoordinates);
+  var viaPoint = reroutePoint && Utils.locationToWaypointString(reroutePoint);
+
   var routeOptions = {
     mode: 'fastest;car',
     representation: 'display',
-    alternatives: 2,
+    // alternatives: 2, // so this has to be dropped when using multiple waypoints
     routeattributes: 'waypoints,summary,shape,legs',
-    waypoint0: Utils.locationToWaypointString(fromCoordinates),
-    waypoint1: Utils.locationToWaypointString(toCoordinates)
+    waypoint0: startPoint,
   };
+
+  if (viaPoint) {
+    routeOptions.waypoint1 = viaPoint;
+    routeOptions.waypoint2 = endPoint;
+  } else {
+    routeOptions.alternatives = 2;
+    routeOptions.waypoint1 = endPoint;
+  }
 
   this.updateMarker('origin', fromCoordinates);
   this.updateMarker('destination', toCoordinates);
 
   this.router.drawRoute(routeOptions);
+  this.places.clearSearch();
+};
+
+HEREMap.prototype.onChangeSelectedRoute = function(route) {
+  // This is ugly, but I have no time to find the correct method from the API :(
+  var middlePoint = route.route.shape[Math.floor(route.route.shape.length / 2)];
+
+  this.searchForIcecreamShop(middlePoint);
+};
+
+HEREMap.prototype.onChangeViaPoint = function(reroutePoint) {
+  var viaPoint = reroutePoint.target.getPosition();
+
+  this.drawRoute(this.position, HEREHQcoordinates, viaPoint);
 };
 
 HEREMap.prototype.searchForIcecreamShop = function(coordinates) {
-    var { lat, lng } = coordinates;
     var query = {
       'q': 'ice cream',
-      'at': `${lat},${lng}`
+      'at': coordinates
     };
 
     this.places.searchPlaces(query);

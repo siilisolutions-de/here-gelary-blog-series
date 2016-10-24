@@ -1,7 +1,8 @@
 'use strict';
 
-function HEREPlaces (map, platform) {
+function HEREPlaces (map, platform, onClickPlace) {
   this.map = map;
+  this.onClickPlace = onClickPlace;
   this.placeSearch = new H.places.Search(platform.getPlacesService());
 
   this.searchResults = [];
@@ -43,19 +44,29 @@ HEREPlaces.prototype.getPlaces = function(query) {
   });
 };
 
+HEREPlaces.prototype.clearSearch = function() {
+  var _this = this;
+
+  _this.searchResults.forEach(function(marker) {
+    _this.map.removeObject(marker);
+  });
+
+  _this.searchResults = [];
+};
+
 HEREPlaces.prototype.updatePlaces = function(places) {
   var _this = this;
   var markerOptions = {
     icon: new H.map.Icon(Utils.icons.iceCream.url, Utils.icons.iceCream.options)
   };
 
-  _this.searchResults.forEach(function(marker) {
-    _this.map.removeObject(marker);
-  });
+  _this.clearSearch();
 
   _this.searchResults = places.map(function(place) {
     var marker = new H.map.Marker(place.coordinates, markerOptions);
     _this.map.addObject(marker);
+
+    marker.addEventListener('tap', _this.onClickPlace);
 
     return marker;
   });
