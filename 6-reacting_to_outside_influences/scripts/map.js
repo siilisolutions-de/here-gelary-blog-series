@@ -11,7 +11,7 @@ function HEREMap (mapContainer, platform, mapOptions) {
 
   // Marker objects
   this.markers = {
-    myLocation: null,
+    viaPoint: null,
     origin: null,
     destination: null
   };
@@ -38,9 +38,6 @@ HEREMap.prototype.updateMyPosition = function(event) {
     lng: event.coords.longitude
   };
 
-  // Remove old location marker if it exists
-  this.updateMarker('myLocation', this.position)
-
   // Draw the route from current location to HERE HQ if not yet drawn
   this.drawRoute(this.position, HEREHQcoordinates);
 
@@ -52,7 +49,7 @@ HEREMap.prototype.addMarker = function(coordinates, icon) {
 
   // Dictonary for icon data
   var icons = {
-    myLocation: {
+    viaPoint: {
       url: './images/marker-gelato.svg',
       options: {
         size: new H.math.Size(26, 34),
@@ -117,6 +114,8 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePo
   };
 
   if (viaPoint) {
+    this.updateMarker('viaPoint', reroutePoint);
+
     routeOptions.waypoint1 = viaPoint;
     routeOptions.waypoint2 = endPoint;
   } else {
