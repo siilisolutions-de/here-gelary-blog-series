@@ -1,5 +1,3 @@
-'use strict';
-
 function HEREMap (mapContainer, platform, mapOptions) {
   this.platform = platform;
   this.position = mapOptions.center;
@@ -8,16 +6,6 @@ function HEREMap (mapContainer, platform, mapOptions) {
 
   // Instantiate wrapped HERE map
   this.map = new H.Map(mapContainer, defaultLayers.normal.map, mapOptions);
-
-  // Marker objects
-  this.markers = {
-    myLocation: null,
-    origin: null,
-    destination: null
-  };
-  
-  // Instantiate router object
-  this.router = new HERERouter(this.map, this.platform);
 
   // Basic behavior: Zooming and panning
   var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
@@ -36,11 +24,16 @@ HEREMap.prototype.updateMyPosition = function(event) {
   };
 
   // Remove old location marker if it exists
-  this.updateMarker('myLocation', this.position)
+  if (this.myLocationMarker) {
+    this.removeMarker(this.myLocationMarker);
+  }
 
   // Draw the route from current location to HERE HQ if not yet drawn
-  this.drawRoute(this.position, HEREHQcoordinates);
+  if (!this.route) {
+    this.drawRoute(this.position, HEREHQcoordinates);
+  }
 
+  this.myLocationMarker = this.addMarker(this.position, 'iceCream');
   this.map.setCenter(this.position);
 };
 
@@ -49,7 +42,7 @@ HEREMap.prototype.addMarker = function(coordinates, icon) {
 
   // Dictonary for icon data
   var icons = {
-    myLocation: {
+    iceCream: {
       url: './images/marker-gelato.svg',
       options: {
         size: new H.math.Size(26, 34),
@@ -88,14 +81,6 @@ HEREMap.prototype.removeMarker = function(marker) {
   this.map.removeObject(marker);
 };
 
-HEREMap.prototype.updateMarker = function(markerName, coordinates) {
-  if (this.markers[markerName]) {
-    this.removeMarker(this.markers[markerName]);
-  }
-
-  this.markers[markerName] = this.addMarker(coordinates, markerName);
-}
-
 HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates) {
   var routeOptions = {
     mode: 'fastest;car',
@@ -106,10 +91,10 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates) {
     waypoint1: Utils.locationToWaypointString(toCoordinates)
   };
 
-  this.updateMarker('origin', fromCoordinates);
-  this.updateMarker('destination', toCoordinates);
+  this.addMarker(fromCoordinates, 'origin');
+  this.addMarker(toCoordinates, 'destination');
 
-  this.router.drawRoute(routeOptions);
+  this.route = new HERERoute(this.map, this.platform, routeOptions);
 };
 
 HEREMap.prototype.resizeToFit = function() {

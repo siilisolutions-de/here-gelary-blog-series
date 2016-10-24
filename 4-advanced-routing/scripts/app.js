@@ -1,4 +1,11 @@
-'use strict';
+var mapContainer = document.getElementById('map-container');
+
+var platform = new H.service.Platform({
+  app_id: '...', // // <-- ENTER YOUR APP ID HERE
+  app_code: '...', // <-- ENTER YOUR APP CODE HERE
+  // Only necessary if served over HTTPS:
+  useHTTPS: true
+});
 
 var HEREHQcoordinates = {
   // HERE HQ in Berlin, Germany:
@@ -6,21 +13,10 @@ var HEREHQcoordinates = {
   lng: 13.384944
 };
 
-(() => {
-  var mapContainer = document.getElementById('map-container');
+// Displaying the map
+var mapOptions = {
+  center: HEREHQcoordinates,
+  zoom: 14
+};
 
-  var platform = new H.service.Platform({
-    app_id: '...', // // <-- ENTER YOUR APP ID HERE
-    app_code: '...', // <-- ENTER YOUR APP CODE HERE
-    // Only necessary if served over HTTPS:
-    useHTTPS: true
-  });
-
-  // Displaying the map
-  var mapOptions = {
-    center: HEREHQcoordinates,
-    zoom: 14
-  };
-
-  var map = new HEREMap(mapContainer, platform, mapOptions);
-})();
+var map = new HEREMap(mapContainer, platform, mapOptions);
