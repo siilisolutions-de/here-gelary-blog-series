@@ -11,37 +11,32 @@ function HEREPlaces (map, platform, onClickPlace) {
 HEREPlaces.prototype.searchPlaces = function(query) {
   var _this = this;
 
-  _this.getPlaces(query).then(function(places) {
+  _this.getPlaces(query, function(places) {
     _this.updatePlaces(places);
-  }).catch(function(error) {
-    console.error(error);
   });
 };
 
-HEREPlaces.prototype.getPlaces = function(query) {
+HEREPlaces.prototype.getPlaces = function(query, onSuccessCallback) {
   var _this = this;
 
-  return new Promise(function(resolve, reject) {
-    var onSuccess = function(data) {
-      if (data.results && data.results.items) {
-        var places = data.results.items.map(function(place) {
-          place.coordinates = { lat: place.position[0], lng: place.position[1] };
+  var onError = function(error) {
+    console.error('Error happened when fetching places!', error);
+  }
+  var onSuccess = function(data) {
+    if (data.results && data.results.items) {
+      var places = data.results.items.map(function(place) {
+        place.coordinates = { lat: place.position[0], lng: place.position[1] };
 
-          return place;
-        });
+        return place;
+      });
 
-        resolve(data.results.items);
-      } else {
-        reject(data);
-      }
+      onSuccessCallback(data.results.items)
+    } else {
+      onError(data);
     }
+  }
 
-    var onError = function(error) {
-      reject(error);
-    }
-
-    _this.placeSearch.request(query, {}, onSuccess, onError);
-  });
+  _this.placeSearch.request(query, {}, onSuccess, onError);
 };
 
 HEREPlaces.prototype.clearSearch = function() {
