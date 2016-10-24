@@ -24,7 +24,7 @@ HERERoutesPanel.prototype.render = function(routes) {
     routeList.removeChild(routeList.firstChild);
   }
 
-  routes.forEach((route, i) => {
+  routes.forEach(function(route, i) {
     routeList.appendChild(this.renderRouteElement(route, i));
   });
   
