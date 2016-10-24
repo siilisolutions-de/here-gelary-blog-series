@@ -1,8 +1,12 @@
 'use strict';
 
 var Utils = {
+  locationToString: function(coordinates) {
+    return coordinates.lat + "," + coordinates.lng;
+  },
+
   locationToWaypointString: function(coordinates) {
-    return 'geo!' + coordinates.lat + ',' + coordinates.lng;
+    return 'geo!' + Utils.locationToString(coordinates);
   },
 
   formatDistance: function(distanceInMeters) {

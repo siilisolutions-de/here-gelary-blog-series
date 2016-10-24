@@ -131,10 +131,10 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePo
 };
 
 HEREMap.prototype.onChangeSelectedRoute = function(route) {
-  // This is ugly, but I have no time to find the correct method from the API :(
-  var middlePoint = route.route.shape[Math.floor(route.route.shape.length / 2)];
+  // This is a bit ugly, but I have no time to find the correct method from the API :(
+  var middlePointOfTheRoute = Utils.locationToString(route.routeLine.getBounds().getCenter());
 
-  this.searchForIcecreamShop(middlePoint);
+  this.searchForIcecreamShop(middlePointOfTheRoute);
 };
 
 HEREMap.prototype.onChangeViaPoint = function(reroutePoint) {
