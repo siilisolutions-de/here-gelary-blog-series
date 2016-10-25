@@ -8,21 +8,20 @@ function HEREPlaces (map, platform, onClickPlace) {
   this.searchResults = [];
 }
 
+// "External API" for POI search for a given query
 HEREPlaces.prototype.searchPlaces = function(query) {
-  var _this = this;
-
-  _this.getPlaces(query, function(places) {
-    _this.updatePlaces(places);
-  });
+  this.getPlaces(query, function(places) {
+    this.updatePlaces(places);
+  }.bind(this));
 };
 
+// Actually retrieve places via the Places API,
+// prepare reponse object and handle errors
 HEREPlaces.prototype.getPlaces = function(query, onSuccessCallback) {
-  var _this = this;
+  var onSuccess,
+      onError;
 
-  var onError = function(error) {
-    console.error('Error happened when fetching places!', error);
-  }
-  var onSuccess = function(data) {
+  onSuccess = function(data) {
     if (data.results && data.results.items) {
       var places = data.results.items.map(function(place) {
         place.coordinates = { lat: place.position[0], lng: place.position[1] };
@@ -34,35 +33,37 @@ HEREPlaces.prototype.getPlaces = function(query, onSuccessCallback) {
     } else {
       onError(data);
     }
-  }
+  };
 
-  _this.placeSearch.request(query, {}, onSuccess, onError);
+  onError = function(error) {
+    console.error('Error happened when fetching places!', error);
+  };
+
+  this.placeSearch.request(query, {}, onSuccess, onError);
 };
 
+// Reset the search
 HEREPlaces.prototype.clearSearch = function() {
-  var _this = this;
+  this.searchResults.forEach(function(marker) {
+    this.map.removeObject(marker);
+  }.bind(this));
 
-  _this.searchResults.forEach(function(marker) {
-    _this.map.removeObject(marker);
-  });
-
-  _this.searchResults = [];
+  this.searchResults = [];
 };
 
 HEREPlaces.prototype.updatePlaces = function(places) {
-  var _this = this;
   var markerOptions = {
     icon: new H.map.Icon(Utils.icons.iceCream.url, Utils.icons.iceCream.options)
   };
 
-  _this.clearSearch();
+  this.clearSearch();
 
-  _this.searchResults = places.map(function(place) {
+  this.searchResults = places.map(function(place) {
     var marker = new H.map.Marker(place.coordinates, markerOptions);
-    _this.map.addObject(marker);
+    this.map.addObject(marker);
 
-    marker.addEventListener('tap', _this.onClickPlace);
+    marker.addEventListener('tap', this.onClickPlace);
 
     return marker;
-  });
+  }.bind(this));
 };
