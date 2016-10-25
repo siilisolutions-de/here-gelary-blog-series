@@ -94,10 +94,6 @@ HEREMap.prototype.updateMarker = function(markerName, coordinates) {
   }
 
   this.markers[markerName] = this.addMarker(coordinates, markerName);
-}
-
-HEREMap.prototype.resizeToFit = function() {
-  this.map.getViewPort().resize();
 };
 
 HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePoint) {
@@ -108,11 +104,12 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePo
   var routeOptions = {
     mode: 'fastest;car',
     representation: 'display',
-    // alternatives: 2, // so this has to be dropped when using multiple waypoints
     routeattributes: 'waypoints,summary,shape,legs',
     waypoint0: startPoint,
   };
 
+  // If an ice-cream parlour has been selected, add it
+  // as stop-over waypoint and adjust the route options accordingly
   if (viaPoint) {
     this.updateMarker('viaPoint', reroutePoint);
 
@@ -130,6 +127,19 @@ HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePo
   this.places.clearSearch();
 };
 
+// Construct proper query object and submit query to API endpoint
+HEREMap.prototype.searchForIcecreamShop = function(coordinates) {
+    var query = {
+      'q': 'ice cream',
+      'at': coordinates
+    };
+
+    this.places.searchPlaces(query);
+};
+
+// Triggered when a route selection is made:
+// Indentify the geographical center for a PolyLine and
+// use it to within the Places search query
 HEREMap.prototype.onChangeSelectedRoute = function(route) {
   var middleOfRoute = Utils.locationToString(route.routeLine.getBounds().getCenter());
 
@@ -142,11 +152,6 @@ HEREMap.prototype.onChangeViaPoint = function(reroutePoint) {
   this.drawRoute(this.position, HEREHQcoordinates, viaPoint);
 };
 
-HEREMap.prototype.searchForIcecreamShop = function(coordinates) {
-    var query = {
-      'q': 'ice cream',
-      'at': coordinates
-    };
-
-    this.places.searchPlaces(query);
-}
+HEREMap.prototype.resizeToFit = function() {
+  this.map.getViewPort().resize();
+};
