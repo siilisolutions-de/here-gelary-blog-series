@@ -1,8 +1,9 @@
 'use strict';
 
-function HERERouter (map, platform) {
+function HERERouter (map, platform, onRouteChange) {
   this.map = map;
   this.router = platform.getRoutingService();
+  this.onRouteChange = onRouteChange;
 
   this.routePanel = null;
   this.selectedRoute = null;
@@ -96,4 +97,7 @@ HERERouter.prototype.onRouteSelection = function(route) {
 
   route.routeLine.setStyle(this.routeLineStyles.selected).setZIndex(10);
   this.selectedRoute = route;
+
+  this.map.setViewBounds(route.routeLine.getBounds());
+  this.onRouteChange(route);
 };

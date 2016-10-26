@@ -18,6 +18,7 @@ HERERoutesPanel.prototype.setRoutes = function(routes) {
 };
 
 HERERoutesPanel.prototype.render = function(routes) {
+  var _this = this;
   var routeList = document.createElement('ul');
 
   while (routeList.hasChildNodes()) {
@@ -25,7 +26,7 @@ HERERoutesPanel.prototype.render = function(routes) {
   }
 
   routes.forEach(function(route, i) {
-    routeList.appendChild(this.renderRouteElement(route, i));
+    routeList.appendChild(_this.renderRouteElement(route, i));
   });
   
   return routeList;
@@ -52,25 +53,27 @@ HERERoutesPanel.prototype.renderRouteElement = function(route, i) {
 };
 
 HERERoutesPanel.prototype.renderRouteTitle = function(routeSummary, i) {
-  return `
-    <strong>Route ${i + 1}</strong>
-    ${Utils.formatDistance(routeSummary.distance)} in 
-    (${Utils.formatDuration(routeSummary.travelTime)})
-  `; // achtung!
+  return [
+    '<strong>Route ' + (i + 1) + '</strong> (',
+    Utils.formatDistance(routeSummary.distance) + ' in ',
+    Utils.formatDuration(routeSummary.travelTime) + ')'
+  ].join('');
 };
 
 HERERoutesPanel.prototype.renderManeuvers = function(maneuvers) {
-  return `
-    <ol class="directions">
-      ${maneuvers.map(this.renderInstruction).join('')}
-    </ol>
-  `;
+  return [
+    '<ol class="directions">',
+    maneuvers.map(this.renderInstruction).join(''),
+    '</ol>'
+  ].join('');
 };
 
 HERERoutesPanel.prototype.renderInstruction = function(maneuver) {
-  return `
-    <li>${maneuver.instruction}</li>
-  `;
+  return [
+    '<li>',
+    maneuver.instruction,
+    '</li>'
+  ].join('');
 };
 
 HERERoutesPanel.prototype.onClickElement = function(element, route) {

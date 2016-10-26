@@ -11,13 +11,16 @@ function HEREMap (mapContainer, platform, mapOptions) {
 
   // Marker objects
   this.markers = {
-    myLocation: null,
+    viaPoint: null,
     origin: null,
     destination: null
   };
-  
+
   // Instantiate router object
-  this.router = new HERERouter(this.map, this.platform);
+  this.router = new HERERouter(this.map, this.platform, this.onChangeSelectedRoute.bind(this));
+
+  // Instantiate places search
+  this.places = new HEREPlaces(this.map, this.platform, this.onChangeViaPoint.bind(this));
 
   // Basic behavior: Zooming and panning
   var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
@@ -35,9 +38,6 @@ HEREMap.prototype.updateMyPosition = function(event) {
     lng: event.coords.longitude
   };
 
-  // Remove old location marker if it exists
-  this.updateMarker('myLocation', this.position)
-
   // Draw the route from current location to HERE HQ if not yet drawn
   this.drawRoute(this.position, HEREHQcoordinates);
 
@@ -49,7 +49,7 @@ HEREMap.prototype.addMarker = function(coordinates, icon) {
 
   // Dictonary for icon data
   var icons = {
-    myLocation: {
+    viaPoint: {
       url: './images/marker-gelato.svg',
       options: {
         size: new H.math.Size(26, 34),
@@ -94,22 +94,62 @@ HEREMap.prototype.updateMarker = function(markerName, coordinates) {
   }
 
   this.markers[markerName] = this.addMarker(coordinates, markerName);
-}
+};
 
-HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates) {
+HEREMap.prototype.drawRoute = function(fromCoordinates, toCoordinates, reroutePoint) {
+  var startPoint = Utils.locationToWaypointString(fromCoordinates);
+  var endPoint = Utils.locationToWaypointString(toCoordinates);
+  var viaPoint = reroutePoint && Utils.locationToWaypointString(reroutePoint);
+
   var routeOptions = {
     mode: 'fastest;car',
     representation: 'display',
-    alternatives: 2,
     routeattributes: 'waypoints,summary,shape,legs',
-    waypoint0: Utils.locationToWaypointString(fromCoordinates),
-    waypoint1: Utils.locationToWaypointString(toCoordinates)
+    waypoint0: startPoint,
   };
+
+  // If an ice-cream parlour has been selected, add it
+  // as stop-over waypoint and adjust the route options accordingly
+  if (viaPoint) {
+    this.updateMarker('viaPoint', reroutePoint);
+
+    routeOptions.waypoint1 = viaPoint;
+    routeOptions.waypoint2 = endPoint;
+  } else {
+    routeOptions.alternatives = 2;
+    routeOptions.waypoint1 = endPoint;
+  }
 
   this.updateMarker('origin', fromCoordinates);
   this.updateMarker('destination', toCoordinates);
 
   this.router.drawRoute(routeOptions);
+  this.places.clearSearch();
+};
+
+// Construct proper query object and submit query to API endpoint
+HEREMap.prototype.searchForIcecreamShop = function(coordinates) {
+    var query = {
+      'q': 'ice cream',
+      'at': coordinates
+    };
+
+    this.places.searchPlaces(query);
+};
+
+// Triggered when a route selection is made:
+// Indentify the geographical center for a PolyLine and
+// use it to within the Places search query
+HEREMap.prototype.onChangeSelectedRoute = function(route) {
+  var middleOfRoute = Utils.locationToString(route.routeLine.getBounds().getCenter());
+
+  this.searchForIcecreamShop(middleOfRoute);
+};
+
+HEREMap.prototype.onChangeViaPoint = function(reroutePoint) {
+  var viaPoint = reroutePoint.target.getPosition();
+
+  this.drawRoute(this.position, HEREHQcoordinates, viaPoint);
 };
 
 HEREMap.prototype.resizeToFit = function() {
