@@ -11,10 +11,35 @@ body {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+button {
+  cursor: pointer;
+  background: white;
+  border: 1px solid rgba(0, 85, 170, 0.75);
+  border-radius: 4px;
+
+  padding: 4px 20px;
+  margin: 0px 4px;
+}
+
+button.active {
+  background: rgba(0, 85, 170, 0.75);
+  color: white;
+}
+
 .map {
   width: 100vw;
   height: 100vh;
   position: relative;
+}
+
+#traffic-panel {
+  background: white;
+  width: 25%;
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 20px;
+  padding: 10px;
 }
 
 #route-panel {
@@ -22,7 +47,7 @@ body {
   width: 25%;
   position: absolute;
   z-index: 1;
-  top: 20px;
+  top: 60px;
   left: 20px;
   padding: 10px;
 }

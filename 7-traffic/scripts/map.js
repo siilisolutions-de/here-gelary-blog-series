@@ -9,9 +9,14 @@ function HEREMap (mapContainer, platform, mapOptions) {
   // Instantiate wrapped HERE map
   this.map = new H.Map(mapContainer, defaultLayers.normal.map, mapOptions);
   
-  // Render traffic and incidents on the map
-  this.map.addLayer(defaultLayers.normal.traffic);
-  this.map.addLayer(defaultLayers.incidents);
+  // Render traffic panel
+  var trafficPanelOptions = {
+    trafficLayer: defaultLayers.normal.traffic,
+    incidentsLayer: defaultLayers.incidents
+  };
+  var trafficPanelElement = document.querySelector('#traffic-panel');
+  
+  this.trafficPanel = new HERETrafficPanel(trafficPanelElement, this.map, trafficPanelOptions);
 
   // Marker objects
   this.markers = {
