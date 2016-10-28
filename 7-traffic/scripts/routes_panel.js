@@ -28,6 +28,10 @@ HERERoutesPanel.prototype.render = function(routes) {
   routes.forEach(function(route, i) {
     routeList.appendChild(_this.renderRouteElement(route, i));
   });
+
+  if (routes.length === 1) {
+    this.onClickElement(routes[0], routeList.children[0]);
+  }
   
   return routeList;
 };
@@ -47,7 +51,7 @@ HERERoutesPanel.prototype.renderRouteElement = function(route, i) {
   // Upon route selection highlight the selected element,
   // highlight the selected route on the map and trigger the
   // onRouteSelection callback if defined.
-  element.addEventListener('click', this.onClickElement.bind(this, element, route), false);
+  element.addEventListener('click', this.onClickElement.bind(this, route, element), false);
 
   return element;
 };
@@ -76,15 +80,22 @@ HERERoutesPanel.prototype.renderInstruction = function(maneuver) {
   ].join('');
 };
 
-HERERoutesPanel.prototype.onClickElement = function(element, route) {
-  if (this.selectedRoute) {
-    this.selectedRouteElement.classList.remove('selected');
+HERERoutesPanel.prototype.onClickElement = function(route, element) {
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected');
+
+    this.selectedRouteElement = null;
+    this.selectedRoute = null;
+  } else {
+    if (this.selectedRoute) {
+      this.selectedRouteElement.classList.remove('selected');
+    }
+  
+    element.classList.add('selected');
+
+    this.selectedRoute = route;
+    this.selectedRouteElement = element;
   }
-
-  element.classList.add('selected');
-
-  this.selectedRoute = route;
-  this.selectedRouteElement = element;
 
   if (this.onRouteSelection) {
     this.onRouteSelection(this.selectedRoute);

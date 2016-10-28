@@ -33,6 +33,10 @@ HERERouter.prototype.drawRoute = function(options) {
     this.map.setViewBounds(routeLineGroup.getBounds());
 
     this.routePanel.setRoutes(routes);
+
+    if (routes.length === 1) {
+      this.onRouteSelection(routes[0]);
+    }
   };
 
   this.getRoutes(options, onSuccess.bind(this));
@@ -95,9 +99,11 @@ HERERouter.prototype.onRouteSelection = function(route) {
     this.selectedRoute.routeLine.setStyle(this.routeLineStyles.normal).setZIndex(1);
   }
 
-  route.routeLine.setStyle(this.routeLineStyles.selected).setZIndex(10);
-  this.selectedRoute = route;
+  if (route) {
+    route.routeLine.setStyle(this.routeLineStyles.selected).setZIndex(10);
+    this.map.setViewBounds(route.routeLine.getBounds());
+    this.onRouteChange(route);
+  }
 
-  this.map.setViewBounds(route.routeLine.getBounds());
-  this.onRouteChange(route);
+  this.selectedRoute = route;
 };

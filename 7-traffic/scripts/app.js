@@ -3,8 +3,8 @@
 var mapContainer = document.getElementById('map-container');
 
 var platform = new H.service.Platform({
-  app_id: 'DN1VOtnsEYNI1qJOpHR6', // // <-- ENTER YOUR APP ID HERE
-  app_code: 'gsz3tb7hf3JQHWB7CKl8nA', // <-- ENTER YOUR APP CODE HERE
+  app_id: '...', // // <-- ENTER YOUR APP ID HERE
+  app_code: '...', // <-- ENTER YOUR APP CODE HERE
   // Only necessary if served over HTTPS:
   useHTTPS: true
 });
